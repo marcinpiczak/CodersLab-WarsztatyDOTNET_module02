@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using Pharmacy.Model;
 
 namespace Pharmacy
 {
@@ -11,7 +13,7 @@ namespace Pharmacy
             ConsoleEx.Write(ConsoleColor.Green, message);
             string input = Console.ReadLine();
 
-            if (input == "" && allowEmpty)
+            if (string.IsNullOrWhiteSpace(input) && allowEmpty)
             {
                 return stringValueIfEmptyAllowed;
             }
@@ -31,9 +33,9 @@ namespace Pharmacy
             //bool dateOk = DateTime.TryParse(input, out DateTime date);
             //if (!dateOk)
 
-            if (input == "" && allowEmpty)
+            if (string.IsNullOrWhiteSpace(input) && allowEmpty)
             {
-                return datetimeValueIfEmptyAllowed.HasValue ? datetimeValueIfEmptyAllowed.Value : DateTime.MinValue;
+                return datetimeValueIfEmptyAllowed ?? DateTime.MinValue;
             }
 
             if (!DateTime.TryParse(input, out DateTime date))
@@ -49,7 +51,7 @@ namespace Pharmacy
         {
             string input = ForString(message, allowEmpty, "");
 
-            if (input == "" && allowEmpty)
+            if (string.IsNullOrWhiteSpace(input) && allowEmpty)
             {
                 return boolValueIfEmptyAllowed;
             }
@@ -74,7 +76,7 @@ namespace Pharmacy
         {
             string input = ForString(message, allowEmpty, "");
 
-            if (input == "" && allowEmpty)
+            if (string.IsNullOrWhiteSpace(input) && allowEmpty)
             {
                 return intValueIfEmptyAllowed;
             }
@@ -92,7 +94,7 @@ namespace Pharmacy
         {
             string input = ForString(message, allowEmpty, "");
 
-            if (input == "" && allowEmpty)
+            if (string.IsNullOrWhiteSpace(input) && allowEmpty)
             {
                 return decimalValueIfEmptyAllowed;
             }
@@ -101,6 +103,97 @@ namespace Pharmacy
             {
                 ConsoleEx.Write(ConsoleColor.Red, "Podana wartość nie jest liczbą dziesiętną. \n");
                 result = ForDecimal(message, allowEmpty, decimalValueIfEmptyAllowed);
+            }
+
+            return result;
+        }
+
+        public static int ForMedicineId(string message)
+        {
+            bool exists;
+            int id;
+            int count = 0;
+
+            do
+            {
+                id = ForInt(message);
+                exists = Medicine.CheckIfExists(id);
+
+                if (exists)
+                {
+                    //break;
+                    return id;
+                }
+
+                ConsoleEx.Write(ConsoleColor.Red, "Lek o podanym ID nie istnieje\n");
+
+                count++;
+
+                if (count >= 2)
+                {
+                    if (Ask.ForBool("Wyświetlić wszystkie leki: t/n "))
+                    {
+                        Console.WriteLine();
+                        ProgramLogic.DisplayMedicineList(Medicine.LoadAll());
+                        Console.WriteLine();
+                    }
+
+                    count = 0;
+                }
+ 
+            } while (!exists);
+
+            return id;
+        }
+
+        private static bool IsValidPesel(string pesel)
+        {
+            if (pesel.Length == 11 && pesel.All(char.IsDigit))
+            {
+                int[] wagi = new int[] { 1, 3, 7, 9, 1, 3, 7, 9, 1, 3 };
+                int sum = 0;
+
+                for (int i = 0; i < pesel.Length - 1; i++)
+                {
+                    sum += (int)char.GetNumericValue(pesel[i]) * wagi[i];
+                }
+
+                if ((int)char.GetNumericValue(pesel[10]) == 10 - sum % 10)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static string ForPesel(string message)
+        {
+            string input = Ask.ForString(message, false, "");
+
+            if (!IsValidPesel(input))
+            {
+                ConsoleEx.Write(ConsoleColor.Red, "Wprowadzony PESEL nie jest prawidłowy. \n");
+                input = ForPesel(message);
+            }
+
+            return input;
+        }
+
+        public static int ForIntListItem(string message, int from, int to)
+        {
+            string input = ForString(message);
+
+            if (!int.TryParse(input, out int result))
+            {
+                ConsoleEx.Write(ConsoleColor.Red, "Podana wartość nie jest liczbą całkowitą. \n");
+                result = ForIntListItem(message, from, to);
+            }
+
+            if (result > to || result < from)
+            {
+                ConsoleEx.Write(ConsoleColor.Red, $"Wybrana wartość jest poza zakresem {from} - {to}. \n");
+                result = ForIntListItem(message, from, to);
             }
 
             return result;

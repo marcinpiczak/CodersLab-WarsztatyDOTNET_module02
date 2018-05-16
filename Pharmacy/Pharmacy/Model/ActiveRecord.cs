@@ -15,6 +15,7 @@ namespace Pharmacy.Model
                                                 "Data Source=.\\SQLEXPRESS;";
 
         private static readonly SqlConnection _conn = new SqlConnection(_connectionString);
+        //internal static SqlTransaction Transaction = _conn.BeginTransaction();
 
         public abstract void Save();
         public abstract void Reload(int id = 0);
@@ -82,7 +83,7 @@ namespace Pharmacy.Model
             return $"delete from {table}s where ID = @id";
         }
 
-        
+        //metoda na potrzeby testowania
         public string RecordToString()
         {
             var properties = new StringBuilder();

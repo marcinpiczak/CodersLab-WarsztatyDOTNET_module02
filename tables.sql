@@ -73,3 +73,9 @@ select ' ,' + COLUMN_NAME + ' = @'+lower(COLUMN_NAME) from INFORMATION_SCHEMA.CO
 for xml path('')
 
 select * from Prescriptions
+
+select * from Orders o
+left join Prescriptions p 
+on o.PrescriptionID = p.ID
+left join Medicines m
+on o.MedicineID = m.ID

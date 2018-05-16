@@ -62,6 +62,7 @@ namespace Pharmacy.Model
                 command.Parameters.AddRange(GetSqlParameters(SqlParamtersType.AllWithoutId));
 
                 Open();
+                //command.Transaction = Transaction;
 
                 if (ID == 0)
                 {
@@ -74,6 +75,7 @@ namespace Pharmacy.Model
                     command.ExecuteNonQuery();
                 }
 
+                //Transaction.Commit();
                 Close();
             }
         }
@@ -153,5 +155,6 @@ namespace Pharmacy.Model
 
             return orderList;
         }
+
     }
 }

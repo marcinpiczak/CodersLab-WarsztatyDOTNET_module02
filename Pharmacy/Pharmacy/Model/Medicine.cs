@@ -78,8 +78,8 @@ namespace Pharmacy.Model
                 {
                     while (reader.Read())
                     {
-                        //ID = Convert.ToInt32(reader["ID"]);
-                        ID = id != 0 ? id : ID;
+                        ID = Convert.ToInt32(reader["ID"]);
+                        //ID = id != 0 ? id : ID;
                         Name = reader["Name"].ToString();
                         Manufacturer = reader["Manufacturer"].ToString();
                         Price = Convert.ToDecimal(reader["Price"]);
@@ -178,5 +178,75 @@ namespace Pharmacy.Model
             return properties.ToString();
         }
         */
+
+        public static bool CheckIfExists(int id)
+        {
+            using (var medicine = new Medicine())
+            {
+                medicine.Reload(id);
+
+                return medicine.ID != 0;
+            }
+        }
+
+        private Medicine GetReaderSelectMaping(SqlDataReader reader)
+        {
+            ID = Convert.ToInt32(reader["ID"]);
+            Name = reader["Name"].ToString();
+            Manufacturer = reader["Manufacturer"].ToString();
+            Price = Convert.ToDecimal(reader["Price"]);
+            Amount = Convert.ToDecimal(reader["Amount"]);
+            WithPrescription = Convert.ToBoolean(reader["WithPrescription"]);
+
+            return this;
+        }
+
+        public static List<Medicine> Search(string whereClausule, SqlParameter[] sqlParameters)
+        {
+            var medList = new List<Medicine>();
+            string selectAll = "select ID, Name, Manufacturer, Price, Amount, WithPrescription from Medicines ";
+            string selectWhere = string.IsNullOrWhiteSpace(whereClausule) ? selectAll : selectAll + whereClausule;
+
+            using (var command = GetCommand(selectWhere))
+            {
+                if (sqlParameters.Length > 0)
+                {
+                    command.Parameters.AddRange(sqlParameters);
+                }
+                
+                Open();
+
+                using (var reader = command.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        medList.Add(new Medicine().GetReaderSelectMaping(reader));
+                    }
+                }
+
+                Close();
+            }
+
+            return medList;
+        }
+
+        public bool OrderExistsForMedicine()
+        {
+            string select = "select count(1) from Orders where MedicineID = @medicineid";
+            int result;
+
+            using (var command = GetCommand(select))
+            {
+                command.Parameters.Add(new SqlParameter("@medicineid", DbType.Int32) { Value = ID }); ;
+
+                Open();
+
+                result = Convert.ToInt32(command.ExecuteScalar());
+
+                Close();
+            }
+
+            return result != 0;
+        }
     }
 }
