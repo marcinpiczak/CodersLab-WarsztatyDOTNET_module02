@@ -11,7 +11,7 @@ namespace Pharmacy.Model
         public int ID { get; protected set; }
 
         private const string _connectionString = "Integrated Security=SSPI;" +
-                                                "Initial Catalog=Pharmacy;" +
+                                                "Initial Catalog=PharmacyDb;" +
                                                 "Data Source=.\\SQLEXPRESS;";
 
         private static readonly SqlConnection _conn = new SqlConnection(_connectionString);
