@@ -2,6 +2,12 @@
 
 Pharmacy jest aplikacją konsolową wspomagającą pracę apteki służącą do zarządzania lekami oraz rejestrowania czynności związanych ze sprzedażą leków.
 
+### Technologie
+C#, LINQ, MS SQL Server
+
+### Biblioteki/Frameworks
+System.Data.SqlClient
+
 ## Instalacja:
 
 W celu uruchomienia aplikacji należy stworzyć nową bazę danych lub odtworzyć bazę z przykładowymi danymi.

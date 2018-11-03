@@ -4,6 +4,12 @@
 
 Pharamcy is a console application that supports pharmacies in medicines management and registration of activities related to the sale of medicines.
 
+### Technologies
+C#, LINQ, MS SQL Server
+
+### Libraries/Frameworks
+System.Data.SqlClient
+
 ## Installation:
 
 In order to run the application, a MS SQL database is required. New database can be created or can be restored from provided backup with sample data.
