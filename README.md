@@ -20,10 +20,6 @@ In order to run the application, a MS SQL database is required. New database can
 
 ## Sample data:
 
-Przykładowe dane zawierają:
-1. zestaw przykładowy leków
-1. wprowadzone przykładowe zamówienia
-
 Sample data contains:
 1. medicines
 1. orders
